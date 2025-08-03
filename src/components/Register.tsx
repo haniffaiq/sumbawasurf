@@ -9,7 +9,7 @@ export default function Register() {
   const { signUp, loading } = useAuth();
   const { getThemeClasses } = useTheme();
   const themeClasses = getThemeClasses();
-  
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -20,37 +20,92 @@ export default function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
+  //     toast.error('Please fill in all fields');
+  //     return;
+  //   }
+
+  //   if (formData.password !== formData.confirmPassword) {
+  //     toast.error('Passwords do not match');
+  //     return;
+  //   }
+
+  //   if (formData.password.length < 6) {
+  //     toast.error('Password must be at least 6 characters long');
+  //     return;
+  //   }
+
+  //   setIsSubmitting(true);
+
+  //   try {
+  //     const result = await signUp(formData.email, formData.password, formData.fullName);
+  //     console.log('signUp result:', result);
+
+  //     if (result.success) {
+  //       if (result.error) {
+  //         // This is the email verification message
+  //         toast.success(result.error);
+  //       } else {
+  //         toast.success('Account created successfully!');
+  //       }
+  //       // Reset form
+  //       setFormData({
+  //         fullName: '',
+  //         email: '',
+  //         password: '',
+  //         confirmPassword: '',
+  //       });
+  //     } else {
+  //       toast.error(result.error || 'Failed to create account');
+  //     }
+  //   } catch (error) {
+  //     toast.error('An unexpected error occurred');
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    console.log('[DEBUG] Submit triggered'); // ✅ Cek kalau tombol benar-benar memicu function
+
     if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
       toast.error('Please fill in all fields');
+      console.warn('[WARN] Missing fields:', formData);
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
+      console.warn('[WARN] Password mismatch');
       return;
     }
 
     if (formData.password.length < 6) {
       toast.error('Password must be at least 6 characters long');
+      console.warn('[WARN] Password too short');
       return;
     }
 
     setIsSubmitting(true);
-    
+    console.log('[DEBUG] Submitting form data:', formData);
+
     try {
       const result = await signUp(formData.email, formData.password, formData.fullName);
-      
+      console.log('[DEBUG] signUp result:', result);
+
       if (result.success) {
         if (result.error) {
-          // This is the email verification message
-          toast.success(result.error);
+          toast.success(result.error); // email verification, misalnya
+          console.info('[INFO] Sign up success with warning:', result.error);
         } else {
           toast.success('Account created successfully!');
+          console.info('[INFO] Account created');
         }
-        // Reset form
+
         setFormData({
           fullName: '',
           email: '',
@@ -59,11 +114,14 @@ export default function Register() {
         });
       } else {
         toast.error(result.error || 'Failed to create account');
+        console.error('[ERROR] Sign up failed:', result.error);
       }
     } catch (error) {
       toast.error('An unexpected error occurred');
+      console.error('[ERROR] Exception during sign up:', error);
     } finally {
       setIsSubmitting(false);
+      console.log('[DEBUG] Submit finished');
     }
   };
 
